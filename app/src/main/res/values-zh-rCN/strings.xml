@@ -28,6 +28,7 @@
     <string name="aggressive_msf_optimization">激进 MSF 优化 (压制 Ping/Watchdog)</string>
     <string name="block_beacon">屏蔽 Beacon 行为上报</string>
     <string name="block_tvk_report">屏蔽 TVK 视频统计上报</string>
+    <string name="block_perf_monitor">屏蔽性能监控线程与统计上报</string>
+    <string name="block_perf_monitor_summary">禁用 Perf_Monitor_Th、Profile 线程及 StatisticCollector 遥测链路</string>
     <string name="block_gif_optimization">优化 GIF 渲染与防御</string>
 </resources>
-

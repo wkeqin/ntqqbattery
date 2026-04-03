@@ -30,5 +30,7 @@
     <string name="block_background_vibrate">Block background vibration</string>
     <string name="block_beacon">Block Beacon behavior reporting</string>
     <string name="block_tvk_report">Block TVK video statistics reporting</string>
+    <string name="block_perf_monitor">Block perf monitor threads and stats reporting</string>
+    <string name="block_perf_monitor_summary">Disable Perf_Monitor_Th, Profile and StatisticCollector telemetry paths</string>
     <string name="block_gif_optimization">Optimize GIF rendering &amp; defense</string>
 </resources>

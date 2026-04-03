@@ -1,6 +1,9 @@
 package com.wkeqin.ntqqbattery.hook.entity.hooks.optimization
 
 import com.wkeqin.ntqqbattery.data.ConfigData
+import com.wkeqin.ntqqbattery.R
+import com.wkeqin.ntqqbattery.hook.entity.FeatureCategory
+import com.wkeqin.ntqqbattery.hook.entity.FeatureDefinition
 import com.wkeqin.ntqqbattery.hook.entity.FeatureRegistry
 import com.wkeqin.ntqqbattery.hook.entity.HookPlan
 import com.wkeqin.ntqqbattery.hook.entity.HookStage
@@ -10,6 +13,14 @@ import com.highcapable.yukihookapi.hook.factory.*
 import com.highcapable.yukihookapi.hook.log.YLog
 
 object PerfMonitorHook : YukiBaseHooker() {
+
+    val feature = FeatureDefinition(
+        key = "block_perf_monitor",
+        titleRes = R.string.block_perf_monitor,
+        summaryRes = R.string.block_perf_monitor_summary,
+        category = FeatureCategory.CORE,
+        defaultEnabled = true
+    )
 
     private val hardBlockThreadNames = setOf(
         "Perf_Monitor_Th",
@@ -24,7 +35,7 @@ object PerfMonitorHook : YukiBaseHooker() {
     }
 
     override fun onHook() {
-        if (ConfigData.isEnabled(FeatureRegistry.blockQQBatteryMonitor).not()) return
+        if (ConfigData.isEnabled(FeatureRegistry.blockPerfMonitor).not()) return
 
         hookStatisticCollector()
         hookNamedThreadStart()

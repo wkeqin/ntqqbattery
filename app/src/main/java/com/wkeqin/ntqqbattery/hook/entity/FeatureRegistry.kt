@@ -10,6 +10,7 @@ import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.BeaconReportHook
 import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.GPUResourceHook
 import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.MSFNetworkSuppressionHook
 import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.MSFOptimizationHook
+import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.PerfMonitorHook
 import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.PowerSaveModeHook
 import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.TVKReportHook
 import com.wkeqin.ntqqbattery.hook.entity.hooks.optimization.ThemeVideoOptimizationHook
@@ -26,6 +27,7 @@ object FeatureRegistry {
     val blockCoreService = CoreServiceHook.feature
     val blockBeacon = BeaconReportHook.feature
     val blockTVKReport = TVKReportHook.feature
+    val blockPerfMonitor = PerfMonitorHook.feature
     val blockMiniAppPreload = MiniAppPreloadHook.feature
     val blockMiniGamePreload = MiniGamePreloadHook.feature
     val blockSplashPreload = SplashPreloadHook.feature
@@ -63,6 +65,7 @@ object FeatureRegistry {
         blockCoreService,
         blockBeacon,
         blockTVKReport,
+        blockPerfMonitor,
         blockMiniAppPreload,
         blockMiniGamePreload,
         blockSplashPreload,
