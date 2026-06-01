@@ -1,10 +1,25 @@
-# NTQQBattery
+<div align="center">
+    <h1> NTQQBattery </h1>
+
+[![GitHub release](https://img.shields.io/github/release/wkeqin/ntqqbattery.svg)](https://github.com/wkeqin/ntqqbattery/releases/latest)
+[![main](https://github.com/wkeqin/ntqqbattery/actions/workflows/build.yml/badge.svg)](https://github.com/wkeqin/ntqqbattery/actions/workflows/build.yml)
+[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=Chat&color=0088cc)](https://t.me/QAuxiliaryChat)
+
+</div>
+
+---
 
 `NTQQBattery` 是一个面向 NTQQ 的 Xposed / LSPosed 省电优化模块。
 
 项目基于 Kotlin、YukiHookAPI 和 KSP 构建，主要针对 NTQQ 常见的耗电来源进行拦截和优化，例如频繁 WakeLock、前台保活服务、预加载、行为上报以及重型后台组件等。
 
-# 注意
+建议结合 thanox/墓碑 等使用，来关闭非必要进程减少内存占用
+<table>
+  <tr>
+    <td><img src="docs/image-1.png" alt="预览图1" width="400"></td>
+    <td><img src="docs/image.png" alt="预览图2" width="400"></td>
+  </tr>
+</table>
 
 ## 功能特性
 
