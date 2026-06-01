@@ -3,7 +3,7 @@
 
 [![GitHub release](https://img.shields.io/github/release/wkeqin/ntqqbattery.svg)](https://github.com/wkeqin/ntqqbattery/releases/latest)
 [![main](https://github.com/wkeqin/ntqqbattery/actions/workflows/build.yml/badge.svg)](https://github.com/wkeqin/ntqqbattery/actions/workflows/build.yml)
-[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=Chat&color=0088cc)](https://t.me/QAuxiliaryChat)
+[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=Chat&color=0088cc)](https://t.me/ntqqbattery)
 
 </div>
 
