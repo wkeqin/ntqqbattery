@@ -13,7 +13,7 @@
 
 项目基于 Kotlin、YukiHookAPI 和 KSP 构建，主要针对 NTQQ 常见的耗电来源进行拦截和优化，例如频繁 WakeLock、前台保活服务、预加载、行为上报以及重型后台组件等。
 
-建议结合 thanox/墓碑 等使用，来关闭非必要进程减少内存占用
+建议配合 thanox 等具有墓碑功能的工具运行，关闭非必要进程减少内存占用
 <table>
   <tr>
     <td><img src="docs/image-1.png" alt="预览图1" width="400"></td>
