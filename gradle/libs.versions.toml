@@ -7,7 +7,7 @@ yukihookapi = "1.3.1"
 # 1.1.0 splits DefaultLogger into platform modules (kavaref-android / kavaref-jvm).
 kavaref = "1.1.0"
 androidx-core-ktx = "1.19.0"
-androidx-appcompat = "1.7.1"
+androidx-appcompat = "1.8.0"
 material = "1.14.0"
 androidx-constraintlayout = "2.2.1"
 junit = "4.13.2"
