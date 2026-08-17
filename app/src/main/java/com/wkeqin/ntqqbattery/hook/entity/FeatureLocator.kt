@@ -14,8 +14,7 @@ object FeatureLocator {
     // ── Cache keys ──
     private const val KEY_MINI_APP_LAUNCHER = "feature_cache_mini_app_launcher"
     private const val KEY_MSF_CONFIG = "feature_cache_msf_config"
-    private const val KEY_BATTERY_MONITOR = "feature_cache_battery_monitor"
-    private const val KEY_QQ_BATTERY_MONITOR_CORE = "feature_cache_qq_battery_monitor_core"
+    private const val KEY_BATTERY_CONFIG = "feature_cache_battery_config"
     private const val KEY_GL_THREAD_MANAGER = "feature_cache_gl_thread_manager"
     private const val KEY_PANDORA_EVENT_REPORT_HELPER = "feature_cache_pandora_event_report_helper"
     private const val KEY_MONITOR_REPORTER = "feature_cache_monitor_reporter"
@@ -35,7 +34,7 @@ object FeatureLocator {
 
     private val ALL_KEYS = arrayOf(
         KEY_MINI_APP_LAUNCHER, KEY_MSF_CONFIG,
-        KEY_BATTERY_MONITOR, KEY_QQ_BATTERY_MONITOR_CORE, KEY_GL_THREAD_MANAGER,
+        KEY_BATTERY_CONFIG, KEY_GL_THREAD_MANAGER,
         KEY_PANDORA_EVENT_REPORT_HELPER, KEY_MONITOR_REPORTER,
         KEY_BEACON_REPORT, KEY_BEACON_TASK_MANAGER, KEY_BEACON_TASK_WRAPPER,
         KEY_QQ_BEACON_REPORT, KEY_NT_BEACON_REPORT, KEY_TVK_BEACON_REPORT,
@@ -135,6 +134,23 @@ object FeatureLocator {
             it.parameterTypes.firstOrNull()?.name?.contains("IECMiniAppLauncher\$MiniAppType") == true
     }
 
+    /**
+     * BatteryConfig（混淆后多为 perf.battery.a）：
+     * - h()/isEnableMonitor()：总开关，init 前读
+     * - 构造参数为 JSONObject
+     */
+    private fun Class<*>.isBatteryConfigClass(): Boolean {
+        val hasEnableMonitor = declaredMethods.any {
+            (it.name == "h" || it.name == "isEnableMonitor" || it.name == "getEnableMonitor") &&
+                it.parameterCount == 0 &&
+                (it.returnType == Boolean::class.javaPrimitiveType || it.returnType == Boolean::class.java)
+        }
+        val hasJsonCtor = declaredConstructors.any {
+            it.parameterCount == 1 && it.parameterTypes.firstOrNull()?.name == "org.json.JSONObject"
+        }
+        return hasEnableMonitor && hasJsonCtor
+    }
+
     // ── Resolve methods (contain actual search logic) ──
 
     private fun resolveMiniAppLauncher(loader: ClassLoader): Class<*>? {
@@ -155,22 +171,19 @@ object FeatureLocator {
         )
     }
 
-    private fun resolveBatteryMonitor(loader: ClassLoader): Class<*>? {
-        return NTQQFeatures.findClassSafe(
-            cacheName = "BatteryMonitor",
-            primaryName = "com.tencent.mobileqq.perf.battery.a",
-            packageName = "com.tencent.mobileqq.perf.battery",
-            constant = "QQBatteryMonitor"
-        )
-    }
-
-    private fun resolveQQBatteryMonitorCore(loader: ClassLoader): Class<*>? {
-        return NTQQFeatures.findClassSafe(
-            cacheName = "QQBatteryMonitorCore",
-            primaryName = "com.tencent.mobileqq.qqbattery.g",
-            packageName = "com.tencent.mobileqq.qqbattery",
-            constant = "QQBattery_QQBatteryMonitorCore"
-        )
+    private fun resolveBatteryConfig(loader: ClassLoader): Class<*>? {
+        // BatteryConfig：enableMonitor 总开关所在配置类
+        return "com.tencent.mobileqq.perf.battery.a".loadClass(loader)
+            ?.takeIf { it.isBatteryConfigClass() }
+            ?: loader.searchClass(name = "NTQQ_Features_BatteryConfig") {
+                fullName { it.startsWith("com.tencent.mobileqq.perf.battery") }
+                method {
+                    name { it == "h" || it == "isEnableMonitor" || it == "getEnableMonitor" }
+                    emptyParam()
+                    returnType = Boolean::class.javaPrimitiveType!!
+                }
+                constructor { param("org.json.JSONObject") }
+            }.all().firstOrNull { it.isBatteryConfigClass() }
     }
 
     private fun resolveGLThreadManager(loader: ClassLoader): Class<*>? {
@@ -342,9 +355,7 @@ object FeatureLocator {
         ConfigData.putStringBatch {
             locate(KEY_MINI_APP_LAUNCHER, loader, "MiniAppLauncher", verify = { it.hasMiniAppPreloadMethod() }) { resolveMiniAppLauncher(it) }
             locate(KEY_MSF_CONFIG, loader, "MSFConfig") { resolveMSFConfig(it) }
-            // BatteryMonitor 和 QQBatteryMonitorCore 从 warmup 移除 —
-            // 加载它们会触发 QQ 电量监控的整条依赖链，导致内存暴涨 1.3GB
-            // PerfFeatures 中已是 lazy，hook 运行时按需加载
+            // BatteryConfig 不放 warmup：按需 lazy 定位即可
             locate(KEY_GL_THREAD_MANAGER, loader, "GLThreadManager") { resolveGLThreadManager(it) }
             locate(KEY_PANDORA_EVENT_REPORT_HELPER, loader, "PandoraEventReportHelper") { resolvePandoraEventReportHelper(it) }
             locate(KEY_MONITOR_REPORTER, loader, "MonitorReporter") { resolveMonitorReporter(it) }
@@ -376,11 +387,13 @@ object FeatureLocator {
     fun getMSFConfig(loader: ClassLoader) =
         locate(KEY_MSF_CONFIG, loader, "MSFConfig") { resolveMSFConfig(it) }
 
-    fun getCachedBatteryMonitor(loader: ClassLoader) =
-        locate(KEY_BATTERY_MONITOR, loader, "BatteryMonitor") { resolveBatteryMonitor(it) }
-
-    fun getCachedQQBatteryMonitorCore(loader: ClassLoader) =
-        locate(KEY_QQ_BATTERY_MONITOR_CORE, loader, "QQBatteryMonitorCore") { resolveQQBatteryMonitorCore(it) }
+    fun getCachedBatteryConfig(loader: ClassLoader) =
+        locate(
+            KEY_BATTERY_CONFIG,
+            loader,
+            "BatteryConfig",
+            verify = { it.isBatteryConfigClass() }
+        ) { resolveBatteryConfig(it) }
 
     fun getCachedGLThreadManager(loader: ClassLoader) =
         locate(KEY_GL_THREAD_MANAGER, loader, "GLThreadManager") { resolveGLThreadManager(it) }

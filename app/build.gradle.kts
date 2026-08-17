@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.wkeqin.ntqqbattery"
-    compileSdk = 36
+    compileSdk = 37
     androidResources.additionalParameters += listOf("--allow-reserved-package-id", "--package-id", "0x64")
 
     defaultConfig {
@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.yukihookapi)
     ksp(libs.yukihookapi.ksp.xposed)
     implementation(libs.kavaref.core)
+    implementation(libs.kavaref.android)
     implementation(libs.kavaref.extension)
 
     implementation(libs.androidx.core.ktx)

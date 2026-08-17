@@ -11,22 +11,12 @@ import com.highcapable.yukihookapi.hook.log.YLog
 object PerfFeatures {
 
     /**
-     * 电池监控类
+     * 电池监控配置（enableMonitor 总开关）
      */
-    val BatteryMonitorClass by lazy {
+    val BatteryConfigClass by lazy {
         val loader = NTQQFeatures.classLoader ?: return@lazy null
-        FeatureLocator.getCachedBatteryMonitor(loader)?.also {
-            YLog.info("Locate BatteryMonitorClass -> ${it.name}")
-        }
-    }
-
-    /**
-     * QQ 电池监控核心
-     */
-    val QQBatteryMonitorCoreClass by lazy {
-        val loader = NTQQFeatures.classLoader ?: return@lazy null
-        FeatureLocator.getCachedQQBatteryMonitorCore(loader)?.also {
-            YLog.info("Locate QQBatteryMonitorCoreClass -> ${it.name}")
+        FeatureLocator.getCachedBatteryConfig(loader)?.also {
+            YLog.info("Locate BatteryConfigClass -> ${it.name}")
         }
     }
 

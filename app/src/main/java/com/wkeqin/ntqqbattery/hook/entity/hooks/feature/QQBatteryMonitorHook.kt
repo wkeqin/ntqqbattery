@@ -7,13 +7,19 @@ import com.wkeqin.ntqqbattery.hook.entity.FeatureDefinition
 import com.wkeqin.ntqqbattery.hook.entity.FeatureRegistry
 import com.wkeqin.ntqqbattery.hook.entity.HookPlan
 import com.wkeqin.ntqqbattery.hook.entity.HookStage
-import com.wkeqin.ntqqbattery.hook.entity.NTQQHooker
 import com.wkeqin.ntqqbattery.hook.entity.features.PerfFeatures
 import com.wkeqin.ntqqbattery.hook.factory.HookResultTracker
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.log.YLog
 
+/**
+ * 阻断 QQ 内置电量监控。
+ *
+ * 切断配置总开关即可：
+ *   BatteryConfig.h()/isEnableMonitor() -> false
+ *     └─ QQBatteryMonitor.b()/init 内 if (aVar.h()) 整段初始化被跳过
+ */
 object QQBatteryMonitorHook : YukiBaseHooker() {
 
     val feature = FeatureDefinition(
@@ -41,35 +47,13 @@ object QQBatteryMonitorHook : YukiBaseHooker() {
 
         val tracker = HookResultTracker("QQBatteryMonitor")
 
-        PerfFeatures.BatteryMonitorClass?.apply {
-            tracker.tryHook("BatteryMonitor.b/init") {
+        PerfFeatures.BatteryConfigClass?.apply {
+            tracker.tryHook("BatteryConfig.h/isEnableMonitor") {
                 method {
-                    name { it == "b" || it == "init" }
+                    name { it == "h" || it == "isEnableMonitor" || it == "getEnableMonitor" }
                     emptyParam()
-                }.hook().before { result = NTQQHooker.safeReturn(method) }
-            }
-
-            tracker.tryHook("BatteryMonitor.a/checkCpuUsage") {
-                method {
-                    name { it == "a" || it == "checkCpuUsage" }
-                    param(String::class.java)
-                }.hook().before { result = NTQQHooker.safeReturn(method) }
-            }
-        }
-
-        PerfFeatures.QQBatteryMonitorCoreClass?.apply {
-            tracker.tryHook("QQBatteryMonitorCore.d/onTurnOn") {
-                method {
-                    name { it == "d" || it == "onTurnOn" }
-                    emptyParam()
-                }.hook().before { result = NTQQHooker.safeReturn(method) }
-            }
-
-            tracker.tryHook("QQBatteryMonitorCore.a/onForeground") {
-                method {
-                    name { it == "a" || it == "onForeground" }
-                    paramCount = 1
-                }.hook().before { result = NTQQHooker.safeReturn(method) }
+                    returnType = Boolean::class.javaPrimitiveType!!
+                }.hook().before { result = false }
             }
         }
 
